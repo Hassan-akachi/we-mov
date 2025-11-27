@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/we-mov.iml" filepath="$PROJECT_DIR$/.idea/we-mov.iml" />
+      <module fileurl="file://$PROJECT_DIR$/we_mov_mobile/we_mov_mobile.iml" filepath="$PROJECT_DIR$/we_mov_mobile/we_mov_mobile.iml" />
+    </modules>
+  </component>
+</project>
