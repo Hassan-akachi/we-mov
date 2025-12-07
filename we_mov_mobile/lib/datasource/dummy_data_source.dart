@@ -67,16 +67,16 @@ class DummyDataSource extends DataSource {
   @override
   Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(int scheduleId, String departureDate) async {
     return TempDB.tableReservation
-        .where((element) => element.busSchedule.scheduleId == scheduleId &&
+        .where((element) => element.busSchedule?.scheduleId == scheduleId &&
     element.departureDate == departureDate).toList();
   }
 
   @override
-  Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo) async {
+  Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo,TransportType? selectedTransport) async {
     BusRoute? route;
     try {
       route = TempDB.tableRoute.firstWhere((element) =>
-      element.cityFrom == cityFrom && element.cityTo == cityTo);
+      element.cityFrom == cityFrom && element.cityTo == cityTo && (element.transportType == selectedTransport|| element.transportType.name == selectedTransport?.name ));
       return route;
 
     } on StateError catch(error) {
@@ -91,8 +91,8 @@ class DummyDataSource extends DataSource {
   }
 
   @override
-  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName) async {
-    return TempDB.tableSchedule.where((schedule) => schedule.busRoute.routeName == routeName).toList();
+  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName,TransportType transportType) async {
+    return TempDB.tableSchedule.where((schedule) => schedule.busRoute.routeName == routeName  && schedule.bus.transportType == transportType).toList();
   }
 
   @override

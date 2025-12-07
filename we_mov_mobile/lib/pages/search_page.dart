@@ -18,9 +18,12 @@ class _SearchPageState extends State<SearchPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  late final argList = ModalRoute.of(context)!.settings.arguments as List;
+  late final TransportType transportType = argList[0];
   @override
   Widget build(BuildContext context) {
     //final transport = context.watch<AppDataProvider>().selectedTransportString;
+
     return Scaffold(
       appBar: AppBar(title: Text("Search ")),
       body: Form(
@@ -132,6 +135,7 @@ class _SearchPageState extends State<SearchPage> {
       initialDate: DateTime.now(),
     );
     if (selectedDate != null) {
+
       setState(() {
         departureDate = selectedDate;
       });
@@ -139,20 +143,31 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _search() {
+    final appProvider = Provider.of<AppDataProvider>(context, listen: false);
+    final TransportType? selectedTransport = appProvider.selectedTransport;
     if (departureDate == null) {
       showToastMsg(emptyDateErrMessage, context);
       return;
     }
     if (_formKey.currentState!.validate()) {
-      Provider.of<AppDataProvider>(
-        context,
-        listen: false,
-      ).getRouteByCityFromAndCityTo(fromCity!, toCity!).then((route) {
-        Navigator.pushNamed(
-          context,
-          routeNameSearchResultPage,
-          arguments: [route, getFormattedDate(departureDate!)],
-        );
+
+      appProvider
+          .getRouteByCityFromAndCityTo(fromCity!, toCity!,selectedTransport)
+      //.getVehicleRouteByCityFromAndCityToAndType(fromCity!, toCity!, transportType)
+          .then((route) {
+        print("Route found: ${route?.transportType}");
+
+        // CRITICAL FIX 3: Check for null route before navigating
+        if (route != null) {
+          Navigator.pushNamed(
+            context,
+            routeNameSearchResultPage,
+            // Pass all three necessary arguments
+            arguments: [route, getFormattedDate(departureDate!)],
+          );
+        } else {
+          showToastMsg("No ${selectedTransport?.name} available for  $fromCity and $toCity  travel" , context);
+        }
       });
     }
   }

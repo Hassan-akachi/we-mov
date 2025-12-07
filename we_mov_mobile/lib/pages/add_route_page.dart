@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../customWidgets/select_transport_dropdown.dart';
 import '../datasource/temp_db.dart';
 import '../models/bus_route.dart';
 import '../providers/app_data_provider.dart';
@@ -18,6 +19,17 @@ class _AddRoutePageState extends State<AddRoutePage> {
   final _formKey = GlobalKey<FormState>();
   String? from, to;
   final distanceController = TextEditingController();
+  // 1. Define a state variable in the parent to hold the selected value
+  late TransportType _parentSelectedTransport;
+
+  // 2. Define the method that will be passed to the child
+  void _handleTransportSelection(TransportType selectedType) {
+    setState(() {
+      _parentSelectedTransport = selectedType;
+      print('Parent received: $selectedType');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +43,13 @@ class _AddRoutePageState extends State<AddRoutePage> {
             padding: const EdgeInsets.symmetric(horizontal: 40),
             shrinkWrap: true,
             children: [
+              TransportSelector( onTransportSelected: _handleTransportSelection,),
+
+
+              const SizedBox(
+                height: 10,
+              ),
+
               DropdownButtonFormField<String>(
                 onChanged: (value) {
                   setState(() {
@@ -107,10 +126,11 @@ class _AddRoutePageState extends State<AddRoutePage> {
     if (_formKey.currentState!.validate()) {
       final route = BusRoute(
         routeId: TempDB.tableRoute.length + 1,
-        routeName: '$from-$to',
+        routeName: '$from → $to (${_parentSelectedTransport.name})',
         cityFrom: from!,
         cityTo: to!,
         distanceInKm: double.parse(distanceController.text),
+        transportType:_parentSelectedTransport
       );
       Provider.of<AppDataProvider>(context, listen: false)
           .addRoute(route)

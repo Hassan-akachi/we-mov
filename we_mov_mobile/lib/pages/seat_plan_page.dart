@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:we_mov_mobile/customWidgets/seat_plan_view.dart';
 import 'package:we_mov_mobile/models/bus_schedule.dart';
+import 'package:we_mov_mobile/models/schedule.dart';
 import 'package:we_mov_mobile/providers/app_data_provider.dart';
 import 'package:we_mov_mobile/utils/colors.dart';
 import 'package:we_mov_mobile/utils/constants.dart';
 
+import '../models/bus_model.dart';
 import '../utils/helper_functions.dart';
 
 class SeatPlanPage extends StatefulWidget {
@@ -16,7 +18,8 @@ class SeatPlanPage extends StatefulWidget {
 }
 
 class _SeatPlanPageState extends State<SeatPlanPage> {
-  late BusSchedule schedule;
+  late BusSchedule schedule; //Schedule
+  //late Schedule schedule;
   late String departureDate;
   int totalSeatBooked = 0;
   String bookedSeatNumbers = '';
@@ -34,6 +37,42 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
     _getData();
     super.didChangeDependencies();
   }
+
+  bool _initialized = false;
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (!_initialized) {
+  //     final arglist = ModalRoute.of(context)!.settings.arguments as List;
+  //     schedule = arglist[0];
+  //     departureDate = arglist[1];
+  //     _getData();
+  //     _initialized = true;
+  //   }
+  // }
+
+  // Future<void> _getData() async {
+  //   final provider = Provider.of<AppDataProvider>(context, listen: false);
+  //
+  //   final resList = await provider.getReservationsByScheduleAndDepartureDate(
+  //     schedule.scheduleId!,
+  //     departureDate,
+  //   );
+  //
+  //   if (!mounted) return;
+  //
+  //   setState(() {
+  //     isDataLoading = false;
+  //   });
+  //
+  //   List<String> seats = [];
+  //   for (final res in resList) {
+  //     totalSeatBooked = res.totalSeatBooked;
+  //     seats.add(res.seatNumbers);
+  //   }
+  //   bookedSeatNumbers = seats.join(',');
+  // }
 
   _getData() async {
     final resList = await Provider.of<AppDataProvider>(context, listen: false)
@@ -105,27 +144,32 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
                   );
                 },
               ),
-              if(!isDataLoading)
+              if (!isDataLoading)
                 Expanded(
-                child: SingleChildScrollView(
-                  child: SeatPlanView(
-                    totalSeat: schedule.bus.totalSeat,
-                    totalSeatBooked: totalSeatBooked,
-                    bookedSeatNumber: bookedSeatNumbers,
-                    isBusinessClass: schedule.bus.busType == busTypeACBusiness,
-                    onSeatSelected: (value, seat) {
-                      if (value) {
-                        selectedSeats.add(seat);
-                      } else {
-                        selectedSeats.remove(seat);
-                      }
-                      selectedSeatStringNotifier.value = selectedSeats.join(
-                        ',',
-                      );
-                    },
+                  child: SingleChildScrollView(
+                    child: SeatPlanView(
+                      totalSeat: schedule.bus.totalSeat,
+                      totalSeatBooked: totalSeatBooked,
+                      bookedSeatNumber: bookedSeatNumbers,
+                      isExecutive:
+                          schedule.bus.busType == busTypeACExecutive || schedule.bus.busType == busTypeACBusiness,
+
+                      // (schedule.vehicle is Bus && (schedule.vehicle as Bus).busType == busTypeACBusiness) ||
+                      // (schedule.vehicle.vehicleClass == VehicleClass.business ||
+                      // schedule.vehicle.vehicleClass == VehicleClass.executive),
+                      onSeatSelected: (value, seat) {
+                        if (value) {
+                          selectedSeats.add(seat);
+                        } else {
+                          selectedSeats.remove(seat);
+                        }
+                        selectedSeatStringNotifier.value = selectedSeats.join(
+                          ',',
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
               SizedBox(height: 10),
               OutlinedButton(
                 onPressed: () {

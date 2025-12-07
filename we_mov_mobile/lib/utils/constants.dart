@@ -1,7 +1,7 @@
 const String currency = '₦';
-const String busTypeNonAc = 'NON-AC';
 const String busTypeACEconomy = 'AC-ECONOMY';
-const String busTypeACBusiness = 'AC-BUSINESS';
+const String busTypeACBusiness = 'AC-BUSINESS'; //busTypeACEconomy = 'AC-ECONOMY';
+const String busTypeACExecutive = 'AC-EXECUTIVE'; //busTypeACBusiness = 'AC-BUSINESS';
 const String reservationConfirmed = 'Confirmed';
 const String reservationCancelled = 'Cancelled';
 const String reservationActive = 'Active';
@@ -42,7 +42,7 @@ enum VehicleClass { economy, business, executive }
 
 enum ResponseStatus { SAVED, FAILED, UNAUTHORIZED, AUTHORIZED, EXPIRED, NONE }
 
-const busTypes = [busTypeACBusiness, busTypeACEconomy, busTypeNonAc];
+const busTypes = [busTypeACExecutive, busTypeACBusiness, busTypeACEconomy];
 
 const seatLabelList = [
   'A',

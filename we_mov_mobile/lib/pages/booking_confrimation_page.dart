@@ -6,6 +6,7 @@ import 'package:we_mov_mobile/models/customer.dart';
 import 'package:we_mov_mobile/providers/app_data_provider.dart';
 import 'package:we_mov_mobile/utils/constants.dart';
 
+import '../models/schedule.dart';
 import '../utils/helper_functions.dart';
 
 class BookingConfirmationPage extends StatefulWidget {
@@ -30,8 +31,8 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> {
   @override
   void initState() {
     nameController.text = "Mr Sorunke";
-    mobileController.text = '+2348161653200';
-    emailController.text = 'hassamsorunke@email.com';
+    mobileController.text = '08161653200';
+    emailController.text = 'hassansorunke@email.com';
     super.initState();
   }
 
@@ -249,15 +250,15 @@ class _BookingConfirmationPageState extends State<BookingConfirmationPage> {
       Provider.of<AppDataProvider>(context,listen: false)//why is listen: false
           .addReservation(reservation)
           .then((response) {
-            if (response.statusCode == 200) {
-              showToastMsg(response.message, context);
-            } else {
-              showToastMsg("Failed", context);
-            }
-          })
+        if (response.statusCode == 200) {
+          showToastMsg(response.message, context);
+        } else {
+          showToastMsg("Failed", context);
+        }
+      })
           .catchError((onError) {
-            showToastMsg("Could not saved because : $onError", context);
-          });
+        showToastMsg("Could not saved because : $onError", context);
+      });
 
       Navigator.popUntil(
         context,

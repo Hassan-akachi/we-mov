@@ -1,3 +1,5 @@
+import 'package:we_mov_mobile/models/schedule.dart';
+
 import 'bus_schedule.dart';
 import 'customer.dart';
 
@@ -17,6 +19,7 @@ class ReservationExpansionHeader {
   int? reservationId;
   String departureDate;
   BusSchedule schedule;
+  //Schedule schedule;
   int timestamp;
   String reservationStatus;
 

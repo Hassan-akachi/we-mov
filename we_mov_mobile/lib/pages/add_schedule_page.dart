@@ -173,6 +173,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
       return;
     }
     if (_formKey.currentState!.validate()) {
+      print("dddddddddddddddddddddddddddddddddddddd${bus?.transportType}");
       final schedule = BusSchedule(
         scheduleId: TempDB.tableSchedule.length + 1,
         bus: bus!,

@@ -5,7 +5,7 @@ import 'package:we_mov_mobile/utils/constants.dart';
 class SeatPlanView extends StatelessWidget {
   final int totalSeat, totalSeatBooked;
   final String bookedSeatNumber;
-  final bool isBusinessClass;
+  final bool isExecutive;
   final Function(bool, String) onSeatSelected;
 
   const SeatPlanView({
@@ -13,23 +13,78 @@ class SeatPlanView extends StatelessWidget {
     required this.totalSeat,
     required this.totalSeatBooked,
     required this.bookedSeatNumber,
-    required this.isBusinessClass,
+    required this.isExecutive,
     required this.onSeatSelected,
   });
 
+
+  // 1. Static method to generate column headers (A, B, C, ...)
+  static List<String> _generateSeatLabels(int count) {
+    List<String> labels = [];
+    for (int i = 0; i < count; i++) {
+      int dividend = i;
+      String label = '';
+
+      // Standard English alphabet offset (A is ASCII 65)
+      while (dividend >= 0) {
+        int remainder = dividend % 26;
+        label = String.fromCharCode(65 + remainder) + label;
+        dividend = (dividend / 26).toInt() - 1; // Move to the next "digit"
+      }
+      labels.add(label);
+    }
+    return labels;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final noOfRow = isBusinessClass ? (totalSeat / 3) : (totalSeat / 4).toInt();
-    final noOfColumn = isBusinessClass ? 3 : 4;
+
+    // Determine configuration
+    final int noOfColumn = isExecutive ? 3 : 4;
+
+    // 2. Calculate the required number of rows using ceil() to fit ALL seats
+    final int requiredRows = (totalSeat / noOfColumn).ceil();
+
+    // 3. Generate the seat labels dynamically
+    final List<String> seatLabelList = _generateSeatLabels(requiredRows);
+
+    // Now, noOfRow equals the number of labels we just generated
+    final int noOfRow = seatLabelList.length;
+
     List<List<String>> seatArrangement = [];
+    int seatsPlaced = 0;
 
     for (int i = 0; i < noOfRow; i++) {
       List<String> columns = [];
       for (int j = 0; j < noOfColumn; j++) {
-        columns.add('${seatLabelList[i]} ${j + 1}');
+        // Check if we have placed all total seats
+        if (seatsPlaced < totalSeat) {
+          // IMPORTANT: i is now guaranteed to be a valid index for seatLabelList
+          columns.add('${seatLabelList[i]} ${j + 1}');
+          seatsPlaced++;
+        } else {
+          // Add a blank/dummy column if the row is incomplete and all seats are placed
+          columns.add('');
+        }
       }
       seatArrangement.add(columns);
     }
+
+
+
+    // // Inside SeatPlanView or a helper function
+    // final int noOfColumn = isBusinessClass ? 3 : 4;
+    // final int requiredRows = (totalSeat / noOfColumn).ceil();
+    // final noOfRow = isBusinessClass ? (totalSeat / 3) : (totalSeat / 4).toInt();
+    // List<List<String>> seatArrangement = [];
+    //
+    // for (int i = 0; i < noOfRow; i++) {
+    //   List<String> columns = [];
+    //   for (int j = 0; j < noOfColumn; j++) {
+    //     columns.add('${seatLabelList[i]} ${j + 1}');
+    //   }
+    //   seatArrangement.add(columns);
+    // }
     final List<String> bookSeatList = bookedSeatNumber.isEmpty
         ? []
         : bookedSeatNumber.split(',');
@@ -67,8 +122,8 @@ class SeatPlanView extends StatelessWidget {
                                 onSeatSelected(value, seatArrangement[i][j]);
                               },
                             ),
-                            if (isBusinessClass && j == 0) SizedBox(width: 14),
-                            if (!isBusinessClass && j == 1) SizedBox(width: 14),
+                            if (isExecutive && j == 0) SizedBox(width: 14),
+                            if (!isExecutive && j == 1) SizedBox(width: 14),
                           ],
                         ),
                     ],

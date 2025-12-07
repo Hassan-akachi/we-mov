@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../customWidgets/select_transport_dropdown.dart';
 import '../datasource/temp_db.dart';
 import '../models/bus_model.dart';
 import '../providers/app_data_provider.dart';
@@ -20,6 +21,19 @@ class _AddBusPageState extends State<AddBusPage> {
   final seatController = TextEditingController();
   final nameController = TextEditingController();
   final numberController = TextEditingController();
+
+
+  // 1. Define a state variable in the parent to hold the selected value
+  late TransportType _parentSelectedTransport;
+
+  // 2. Define the method that will be passed to the child
+  void _handleTransportSelection(TransportType selectedType) {
+    setState(() {
+      _parentSelectedTransport = selectedType;
+      print('Parent received: $selectedType');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +47,13 @@ class _AddBusPageState extends State<AddBusPage> {
             padding: const EdgeInsets.symmetric(horizontal: 40),
             shrinkWrap: true,
             children: [
+
+              TransportSelector( onTransportSelected: _handleTransportSelection,),
+
+
+              const SizedBox(
+                height: 10,
+              ),
               DropdownButtonFormField<String>(
                 onChanged: (value) {
                   setState(() {
@@ -91,9 +112,11 @@ class _AddBusPageState extends State<AddBusPage> {
                   return null;
                 },
               ),
+
               const SizedBox(
                 height: 5,
               ),
+
               TextFormField(
                 keyboardType: TextInputType.number,
                 controller: seatController,
@@ -136,7 +159,10 @@ class _AddBusPageState extends State<AddBusPage> {
         busNumber: numberController.text,
         busType: busType!,
         totalSeat: int.parse(seatController.text),
+        transportType:_parentSelectedTransport
       );
+
+      print("${bus.transportType}bbbbbbbbbbbbbbbbbbbbbbbb${bus.busName}ddddddddddddddddddddddddddddddddddd${bus.totalSeat}");
       Provider.of<AppDataProvider>(context, listen: false)
       .addBus(bus)
       .then((response) {

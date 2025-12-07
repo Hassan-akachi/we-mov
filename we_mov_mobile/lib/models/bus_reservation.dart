@@ -1,11 +1,14 @@
 
+import 'package:we_mov_mobile/models/schedule.dart';
+
 import 'bus_schedule.dart';
 import 'customer.dart';
 
 class BusReservation {
   int? reservationId;
   Customer customer;
-  BusSchedule busSchedule;
+  BusSchedule? busSchedule;
+  Schedule? schedule;
   int timestamp;
   String departureDate;
   int totalSeatBooked;
@@ -16,7 +19,8 @@ class BusReservation {
   BusReservation({
     this.reservationId,
     required this.customer,
-    required this.busSchedule,
+     this.busSchedule,
+    this.schedule,
     required this.timestamp,
     required this.departureDate,
     required this.totalSeatBooked,

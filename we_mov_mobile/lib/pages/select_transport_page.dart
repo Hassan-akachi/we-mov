@@ -101,7 +101,10 @@ class SelectTransportPage extends StatelessWidget {
                 itemCount: transports.length,
                 itemBuilder: (context, index) {
                   final transport = transports[index];
-                  final isSelected = selectedTransport == transport.type;
+
+                  // Read the selected transport from the provider if needed for selection effect.
+                  final currentSelection = context.watch<AppDataProvider>().selectedTransport;
+                  final isSelected = currentSelection == transport.type;
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
@@ -109,17 +112,24 @@ class SelectTransportPage extends StatelessWidget {
                       transport: transport,
                       isSelected: isSelected,
                       onTap: () {
-                        // setState(() {
-                        //   selectedTransport = transport.type;
-                        // });
-                        //context.read<AppDataProvider>().setTransport(transport.type);
+                        // 1. Get the provider instance
+                        final provider = context.read<AppDataProvider>();
 
-                        Navigator.push(
+                        // 2. Set the selected transport type in the provider
+                        provider.setTransport(transport.type);
+
+                        // You can print the value from the provider now
+                        print("Selected Transport Type: ${provider.selectedTransport}");
+
+                        // 3. Navigate to the next page
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            //builder: (context) => transportScreens[transport.type]!(),
-                            builder: (context) => SearchPage()
-                          ),
+                          // You were trying to push to routeNameHome, which is likely the SearchPage route
+                          // If you want to pass the selected type as an argument:
+                          routeNameHome, // Assuming this is your next page
+                          // The selected transport is now available in the provider,
+                          // but you can pass the type as an argument if required by the next screen's arguments
+                          arguments: [transport.type],
                         );
                       },
                     ),
@@ -127,12 +137,9 @@ class SelectTransportPage extends StatelessWidget {
                 },
               ),
             ),
-
-
           ],
         ),
       ),
     );
   }
 }
-

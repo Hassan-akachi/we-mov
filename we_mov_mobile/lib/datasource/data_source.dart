@@ -16,10 +16,10 @@ abstract class DataSource {
   Future<ResponseModel> addRoute(BusRoute busRoute);
   Future<List<BusRoute>> getAllRoutes();
   Future<BusRoute?> getRouteByRouteName(String routeName);
-  Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo);
+  Future<BusRoute?> getRouteByCityFromAndCityTo(String cityFrom, String cityTo, TransportType? selectedTransport);
   Future<ResponseModel> addSchedule(BusSchedule busSchedule);
   Future<List<BusSchedule>> getAllSchedules();
-  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName);
+  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName, TransportType transportType);
   Future<ResponseModel> addReservation(BusReservation reservation);
   Future<List<BusReservation>> getAllReservation();
   Future<List<BusReservation>> getReservationsByMobile(String mobile);

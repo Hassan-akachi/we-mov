@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:we_mov_mobile/datasource/vehicle_data_source.dart';
+import 'package:we_mov_mobile/datasource/vehicle_dummy_datasource.dart';
+import 'package:we_mov_mobile/models/schedule.dart';
+import 'package:we_mov_mobile/models/vehicle.dart';
 
 import '../datasource/data_source.dart';
 import '../datasource/dummy_data_source.dart';
@@ -8,10 +12,12 @@ import '../models/bus_route.dart';
 import '../models/bus_schedule.dart';
 import '../models/reservation_expansion_item.dart';
 import '../models/response_model.dart';
+import '../utils/constants.dart';
 
 
 class AppDataProvider extends ChangeNotifier {
   List<Bus> _busList = [];
+  List<Vehicle>_vehicleList = [];
   List<BusRoute> _routeList = [];
   List<BusReservation> _reservationList = [];
   List<BusSchedule> _scheduleList = [];
@@ -19,11 +25,28 @@ class AppDataProvider extends ChangeNotifier {
   List<BusSchedule> get scheduleList => _scheduleList;
 
   List<Bus> get busList => _busList;
+  List<Vehicle> get vehicleList => _vehicleList;
 
   List<BusRoute> get routeList => _routeList;
 
   List<BusReservation> get reservationList => _reservationList;
   final DataSource _dataSource = DummyDataSource();
+
+  final VehicleDataSource _vehicleDataSource = VehicleDummyDatasource();
+
+
+  // New property to track selected transport
+  TransportType? _selectedTransport;
+
+  TransportType? get selectedTransport => _selectedTransport;
+
+  /// Setter method to update the selected transport type
+  void setTransport(TransportType type) {
+    _selectedTransport = type;
+    notifyListeners();
+  }
+
+
 
   Future<ResponseModel> addBus(Bus bus) {
     return _dataSource.addBus(bus);
@@ -62,12 +85,20 @@ class AppDataProvider extends ChangeNotifier {
   }
 
   Future<BusRoute?> getRouteByCityFromAndCityTo(
-      String cityFrom, String cityTo) {
-    return _dataSource.getRouteByCityFromAndCityTo(cityFrom, cityTo);
+      String cityFrom, String cityTo, TransportType? selectedTransport) {
+    return _dataSource.getRouteByCityFromAndCityTo(cityFrom, cityTo,selectedTransport);
   }
 
-  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName) async {
-    return _dataSource.getSchedulesByRouteName(routeName);
+  Future<BusRoute?> getVehicleRouteByCityFromAndCityToAndType(String cityFrom, String cityTo,TransportType transportType) {
+    return _vehicleDataSource.getVehicleRouteByCityFromAndCityToAndType(cityFrom, cityTo,transportType);
+  }
+
+  Future<List<BusSchedule>> getSchedulesByRouteName(String routeName, TransportType transportType) async {
+    return _dataSource.getSchedulesByRouteName(routeName,transportType);
+  }
+
+  Future<List<Schedule>> getVehicleSchedulesByRouteName(BusRoute routeName) async {
+    return _vehicleDataSource.getSchedulesByVehicleRouteName(routeName);
   }
 
   Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(
@@ -83,7 +114,7 @@ class AppDataProvider extends ChangeNotifier {
         header: ReservationExpansionHeader(
           reservationId: reservation.reservationId,
           departureDate: reservation.departureDate,
-          schedule: reservation.busSchedule,
+          schedule: reservation.busSchedule!,// reservation.Schedule,
           timestamp: reservation.timestamp,
           reservationStatus: reservation.reservationStatus,
         ),

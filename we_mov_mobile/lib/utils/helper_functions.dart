@@ -17,10 +17,12 @@ void showToastMsg(String msg,BuildContext context) {
       content:  Row(
         children: [
           Icon(Icons.info_outline, color: Colors.white),
-          SizedBox(width: 12),
+          SizedBox(width: 4),
           Text(
             msg,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: Colors.white),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500,color: Colors.white),
           ),
         ],
       ),
@@ -29,7 +31,7 @@ void showToastMsg(String msg,BuildContext context) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(50),
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       duration: const Duration(seconds: 3),
     ),
   );
