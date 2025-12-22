@@ -1,0 +1,61 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+
+### 1. Add a bus schedule
+POST {{baseUrl}}/api/schedule/add
+Content-Type: {{contentType}}
+
+{
+  "departureTime": "15:30",
+  "ticketPrice": 2000,
+  "discount": 300,
+  "processingFee": 100,
+
+  "bus": {
+    "busId": 1
+  },
+
+  "busRoute": {
+    "routeId": 1
+  }
+}
+
+
+
+
+### Add bus schedule with actual values
+POST http://localhost:8080/api/schedule/add
+Content-Type: application/json
+
+{
+  "departureTime": "10:30",
+  "ticketPrice": 1500,
+  "discount": 200,
+  "processingFee": 50,
+  "bus": {
+    "busId": 2,
+    "busName": "Quyyum Jet",
+    "busNumber": "Jet001",
+    "busType": "AC-EXECUTIVE",
+    "totalSeat": 40,
+    "transportType": "AIRPLANE"
+  },
+  "busRoute": {
+    "routeId": 2,
+    "routeName": "Lagos-Abuja-AIR",
+    "cityFrom": "Lagos",
+    "cityTo": "Abuja",
+    "distanceInKm": 220.5,
+    "transportType": "AIRPLANE"
+  }
+}
+
+
+### 2. Get all bus schedules
+GET {{baseUrl}}/api/schedule/all
+Accept: application/json
+
+### 3. Get bus schedules by route name
+GET http://localhost:8080/api/schedule/getBusScheduleByRouteName?routeName=Lagos-Abuja%20AIR
+Accept: application/json

@@ -1,0 +1,37 @@
+### Base URL
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+###
+
+### 1. Add a new bus route
+POST {{baseUrl}}/api/route/add
+Content-Type: {{contentType}}
+
+{
+  "routeName": "Lagos-Abuja-BUS",
+  "cityFrom": "Lagos",
+  "cityTo": "Abuja",
+  "distanceInKm": 220.5,
+  "transportType": "AIRPLANE"
+}
+
+###
+
+### 2. Get all bus routes
+GET {{baseUrl}}/api/route/all
+Accept: application/json
+
+###
+
+### 3. Get route by route name
+GET {{baseUrl}}/api/route/routeName?routeName=Lagos-Abuja%20AIR
+Accept: application/json
+
+###
+
+### 4. Get route by cityFrom, cityTo and transportType
+GET {{baseUrl}}/api/route/query?cityFrom=Lagos&cityTo=Ibadan&transportType=BUS
+Accept: application/json
+
+###

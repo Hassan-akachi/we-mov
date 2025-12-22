@@ -1,0 +1,45 @@
+### Base URL
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### 1. Add a reservation
+POST {{baseUrl}}/api/reservation/add
+Content-Type: {{contentType}}
+
+{
+  "customer": {
+    "customerName": "Hassan Sorunke",
+    "mobile": "08012345678",
+    "email": "hassan@gmail.com"
+  },
+  "busSchedule": {
+    "scheduleId": 1
+  },
+  "departureDate": "2025-12-20",
+  "totalSeatBooked": 2,
+  "seatNumbers": "A1,A2",
+  "reservationStatus": "CONFIRMED",
+  "totalPrice": 3000,
+  "timestamp": 1766012000000
+}
+
+
+### 2. Get all reservations
+GET {{baseUrl}}/api/reservation/all
+Accept: application/json
+
+### 3. Get reservations by schedule and departure date
+GET {{baseUrl}}/api/reservation/query?scheduleId=1&departureDate=2025-12-20
+Accept: application/json
+
+
+### 4. Get reservations by customer mobile
+GET {{baseUrl}}/api/reservation/mobile/08012345678
+Accept: application/json
+
+### 5. Get reservations by customer email
+GET {{baseUrl}}/api/reservation/email/hassan@gmail.com
+Accept: application/json
+
+#### 6. Cancel a reservation
+#PUT {{baseUrl}}/api/reservation/cancel/1

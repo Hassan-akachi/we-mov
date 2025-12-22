@@ -1,0 +1,19 @@
+### Send POST request with json body
+### Base URL
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### 1. Add a reservation
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "admin001"
+}
+
+### 2. Get all reservations
+#{
+#  "userName": "hassan",
+#  "password": "123456"
+#}

@@ -1,0 +1,11 @@
+### Send POST request with json body
+POST http://localhost:8080/api/bus/add
+Content-Type: application/json
+
+{
+  "busName": "Quyyum Jet",
+  "busNumber": "Jet001",
+  "busType": "AC-EXECUTIVE",
+  "totalSeat": 40,
+  "transportType": "AIRPLANE"
+}
