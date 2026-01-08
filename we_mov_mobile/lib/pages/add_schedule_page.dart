@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../customWidgets/login_alert_dialog.dart';
 import '../datasource/temp_db.dart';
 import '../models/bus_model.dart';
 import '../models/bus_route.dart';
@@ -175,7 +176,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
     if (_formKey.currentState!.validate()) {
       print("dddddddddddddddddddddddddddddddddddddd${bus?.transportType}");
       final schedule = BusSchedule(
-        scheduleId: TempDB.tableSchedule.length + 1,
+       // scheduleId: TempDB.tableSchedule.length + 1,
         bus: bus!,
         busRoute: busRoute!,
         departureTime: getFormattedTime(timeOfDay!),
@@ -187,8 +188,17 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
       .addSchedule(schedule)
       .then((response) {
         if(response.responseStatus == ResponseStatus.SAVED) {
-          showToastMsg(response.message,context);
+          showToastMsg(response.message??"",context);
           resetFields();
+        }else if (response.responseStatus == ResponseStatus.EXPIRED ||
+            response.responseStatus == ResponseStatus.UNAUTHORIZED) {
+          showLoginAlertDialog(
+            context: context,
+            message: response.message ?? "",
+            callback: () {
+              Navigator.pushNamed(context, routeNameLoginPage);
+            },
+          );
         }
       });
 

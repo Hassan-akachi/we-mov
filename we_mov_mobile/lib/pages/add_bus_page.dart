@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../customWidgets/login_alert_dialog.dart';
 import '../customWidgets/select_transport_dropdown.dart';
 import '../datasource/temp_db.dart';
 import '../models/bus_model.dart';
@@ -22,7 +23,6 @@ class _AddBusPageState extends State<AddBusPage> {
   final nameController = TextEditingController();
   final numberController = TextEditingController();
 
-
   // 1. Define a state variable in the parent to hold the selected value
   late TransportType _parentSelectedTransport;
 
@@ -37,9 +37,7 @@ class _AddBusPageState extends State<AddBusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Bus'),
-      ),
+      appBar: AppBar(title: const Text('Add Bus')),
       body: Form(
         key: _formKey,
         child: Center(
@@ -47,13 +45,9 @@ class _AddBusPageState extends State<AddBusPage> {
             padding: const EdgeInsets.symmetric(horizontal: 40),
             shrinkWrap: true,
             children: [
+              TransportSelector(onTransportSelected: _handleTransportSelection),
 
-              TransportSelector( onTransportSelected: _handleTransportSelection,),
-
-
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               DropdownButtonFormField<String>(
                 onChanged: (value) {
                   setState(() {
@@ -61,26 +55,23 @@ class _AddBusPageState extends State<AddBusPage> {
                   });
                 },
                 validator: (value) {
-                  if(value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty) {
                     return 'Please select a Bus Type';
                   }
                 },
                 decoration: InputDecoration(
-                    errorStyle: const TextStyle(color: Colors.white70)
+                  errorStyle: const TextStyle(color: Colors.white70),
                 ),
                 isExpanded: true,
                 value: busType,
                 hint: const Text('Select Bus Type'),
                 items: busTypes
-                    .map((e) => DropdownMenuItem<String>(
-                  value: e,
-                  child: Text(e),
-                ))
+                    .map(
+                      (e) => DropdownMenuItem<String>(value: e, child: Text(e)),
+                    )
                     .toList(),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -95,9 +86,7 @@ class _AddBusPageState extends State<AddBusPage> {
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               TextFormField(
                 controller: numberController,
                 decoration: const InputDecoration(
@@ -113,9 +102,7 @@ class _AddBusPageState extends State<AddBusPage> {
                 },
               ),
 
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
 
               TextFormField(
                 keyboardType: TextInputType.number,
@@ -132,9 +119,7 @@ class _AddBusPageState extends State<AddBusPage> {
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               Center(
                 child: SizedBox(
                   width: 150,
@@ -154,21 +139,32 @@ class _AddBusPageState extends State<AddBusPage> {
   void addBus() {
     if (_formKey.currentState!.validate()) {
       final bus = Bus(
-        busId: TempDB.tableBus.length + 1, // remove this line if you save into MySql DB
+        // busId: TempDB.tableBus.length + 1, // remove this line if you save into MySql DB
         busName: nameController.text,
         busNumber: numberController.text,
         busType: busType!,
         totalSeat: int.parse(seatController.text),
-        transportType:_parentSelectedTransport
+        transportType: _parentSelectedTransport,
       );
 
-      print("${bus.transportType}bbbbbbbbbbbbbbbbbbbbbbbb${bus.busName}ddddddddddddddddddddddddddddddddddd${bus.totalSeat}");
-      Provider.of<AppDataProvider>(context, listen: false)
-      .addBus(bus)
-      .then((response) {
-        if(response.responseStatus == ResponseStatus.SAVED) {
-          showToastMsg(response.message,context);
+      print(
+        "${bus.transportType}bbbbbbbbbbbbbbbbbbbbbbbb${bus.busName}ddddddddddddddddddddddddddddddddddd${bus.totalSeat}",
+      );
+      Provider.of<AppDataProvider>(context, listen: false).addBus(bus).then((
+        response,
+      ) {
+        if (response.responseStatus == ResponseStatus.SAVED) {
+          showToastMsg(response.message!, context);
           resetFields();
+        } else if (response.responseStatus == ResponseStatus.EXPIRED ||
+            response.responseStatus == ResponseStatus.UNAUTHORIZED) {
+          showLoginAlertDialog(
+            context: context,
+            message: response.message!,
+            callback: () {
+              Navigator.pushNamed(context, routeNameLoginPage);
+            },
+          );
         }
       });
     }

@@ -17,7 +17,6 @@ class SeatPlanView extends StatelessWidget {
     required this.onSeatSelected,
   });
 
-
   // 1. Static method to generate column headers (A, B, C, ...)
   static List<String> _generateSeatLabels(int count) {
     List<String> labels = [];
@@ -38,7 +37,6 @@ class SeatPlanView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // Determine configuration
     final int noOfColumn = isExecutive ? 3 : 4;
 
@@ -70,8 +68,6 @@ class SeatPlanView extends StatelessWidget {
       seatArrangement.add(columns);
     }
 
-
-
     // // Inside SeatPlanView or a helper function
     // final int noOfColumn = isBusinessClass ? 3 : 4;
     // final int requiredRows = (totalSeat / noOfColumn).ceil();
@@ -85,9 +81,14 @@ class SeatPlanView extends StatelessWidget {
     //   }
     //   seatArrangement.add(columns);
     // }
+
+    // final List<String> bookSeatList = bookedSeatNumber.isEmpty
+    //     ? []
+    //     : bookedSeatNumber.split(',');
+
     final List<String> bookSeatList = bookedSeatNumber.isEmpty
         ? []
-        : bookedSeatNumber.split(',');
+        : bookedSeatNumber.split(',').map((e) => e.trim()).toList();
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -114,10 +115,15 @@ class SeatPlanView extends StatelessWidget {
                         Row(
                           children: [
                             Seat(
-                              label: seatArrangement[i][j],
+                              label: seatArrangement[i][j].trim(),
+
+                              //seatArrangement[i][j],
                               isBooked: bookSeatList.contains(
-                                seatArrangement[i][j],
+                                seatArrangement[i][j].trim(),
                               ),
+                              // bookSeatList.contains(
+                              //   seatArrangement[i][j],
+                              // ),
                               onSelect: (value) {
                                 onSeatSelected(value, seatArrangement[i][j]);
                               },

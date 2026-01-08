@@ -152,21 +152,17 @@ class _SearchPageState extends State<SearchPage> {
     if (_formKey.currentState!.validate()) {
 
       appProvider
-          .getRouteByCityFromAndCityTo(fromCity!, toCity!,selectedTransport)
-      //.getVehicleRouteByCityFromAndCityToAndType(fromCity!, toCity!, transportType)
+          .getRouteByCityFromAndCityTo(fromCity!, toCity!, selectedTransport)
           .then((route) {
-        print("Route found: ${route?.transportType}");
-
-        // CRITICAL FIX 3: Check for null route before navigating
         if (route != null) {
           Navigator.pushNamed(
             context,
             routeNameSearchResultPage,
-            // Pass all three necessary arguments
             arguments: [route, getFormattedDate(departureDate!)],
           );
         } else {
-          showToastMsg("No ${selectedTransport?.name} available for  $fromCity and $toCity  travel" , context);
+          // Provide better feedback if the route doesn't exist
+          showToastMsg("No routes found for ${selectedTransport?.name} from $fromCity to $toCity", context);
         }
       });
     }

@@ -62,6 +62,14 @@ class MainDrawer extends StatelessWidget {
           ListTile(
             onTap: () {
               Navigator.pop(context);
+              Navigator.pushNamed(context, routeNameReservationListScreenPage);
+            },
+            leading: const Icon(Icons.book_online),
+            title: const Text('View Reservations (List Screen)'),
+          ),
+          ListTile(
+            onTap: () {
+              Navigator.pop(context);
               Navigator.pushNamed(context, routeNameLoginPage);
             },
             leading: const Icon(Icons.login_outlined),

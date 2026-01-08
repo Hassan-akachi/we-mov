@@ -11,6 +11,7 @@ const String emptyDateErrMessage = 'Select Departure Date ';
 const String accessToken = 'accessToken';
 const String loginTime = 'loginTime';
 const String expirationDuration = 'expirationDuration';
+const String isAdmin = 'isAdmin';
 const String routeSplash = 'splash';
 const String routeNameSelectTransport = 'select_transport';
 const String routeNameHome = 'search';
@@ -24,6 +25,7 @@ const String routeNameAddRoutePage = 'add_route';
 const String routeNameAddSchedulePage = 'add_schedule';
 const String routeNameScheduleListPage = 'schedule_list';
 const String routeNameReservationPage = 'reservation';
+const String routeNameReservationListScreenPage = 'reservation_screen';
 
 const cities = [
   'Lagos',

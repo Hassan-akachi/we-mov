@@ -15,6 +15,7 @@ class SearchResultPage extends StatelessWidget {
     final argList = ModalRoute.of(context)!.settings.arguments as List;
     final BusRoute route = argList[0];
     final String departureDate = argList[1];
+    print("ddddddddddngjdnjsngnsnjsl${route.routeName}");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Results'),
@@ -30,21 +31,43 @@ class SearchResultPage extends StatelessWidget {
             builder: (context, provider, _) => FutureBuilder<List<BusSchedule>>(
               future: provider.getSchedulesByRouteName(route.routeName,route.transportType),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final scheduleList = snapshot.data!;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: scheduleList
-                        .map((schedule) => ScheduleItemView(
-                        schedule: schedule, date: departureDate))
-                        .toList(),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return const Text('Failed to fetch data');
-                }
-                return const Text('Please wait');
-              },
+              // 1. Handle Loading State
+              if (snapshot.connectionState == ConnectionState.waiting) {
+    return const Center(child: CircularProgressIndicator());
+    }
+
+        // 2. Handle Error State
+        if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}'));
+    }
+
+    // 3. Handle Data State
+    if (snapshot.hasData) {
+      final scheduleList = snapshot.data!;
+
+      // ⭐ IMPORTANT: Check if the list is empty
+      if (scheduleList.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Text('No schedules found for this route today.'),
+          ),
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: scheduleList
+            .map((schedule) => ScheduleItemView(
+          schedule: schedule,
+          date: departureDate,
+        ))
+            .toList(),
+      );
+    }
+
+    return const SizedBox.shrink();
+  },
             ),
           )
         ],

@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:we_mov_mobile/utils/constants.dart';
+
+import '../models/app_user.dart';
+import '../providers/app_data_provider.dart';
+import '../utils/helper_functions.dart';
 
 // Sign In Page
 class LoginPage extends StatefulWidget {
@@ -23,13 +28,22 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _signIn() {
-    if (_formKey.currentState!.validate()) {
+  Future<void> _signIn() async {
+    if (_formKey.currentState!.validate())  {
       // Implement sign in logic here
       print('Email: ${emailController.text}');
       print('Password: ${passwordController.text}');
       print('User Type: $_userType');
-  Navigator.pushReplacementNamed(context, routeNameSelectTransport);
+      final response = await Provider.of<AppDataProvider>(context, listen: false)
+          .login(AppUser(userName: emailController.text, password: passwordController.text,role: _userType.toUpperCase()));
+      if(response != null) {
+        showToastMsg(response.message,context);
+        // Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, routeNameSelectTransport);
+      } else {
+        showToastMsg( 'Login failed',context);
+      }
+
       // Navigate to home or admin dashboard based on user type
     }
   }
@@ -140,9 +154,9 @@ class _LoginPageState extends State<LoginPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
-                              if (!value.contains('@')) {
-                                return 'Please enter a valid email';
-                              }
+                              // if (!value.contains('@')) {
+                              //   return 'Please enter a valid email';
+                              // }
                               return null;
                             },
                           ),

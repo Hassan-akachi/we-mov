@@ -74,21 +74,46 @@ class _SeatPlanPageState extends State<SeatPlanPage> {
   //   bookedSeatNumbers = seats.join(',');
   // }
 
+  // _getData() async {
+  //   final resList = await Provider.of<AppDataProvider>(context, listen: false)
+  //       .getReservationsByScheduleAndDepartureDate(
+  //         schedule.scheduleId!,
+  //         departureDate,
+  //       );
+  //   setState(() {
+  //     isDataLoading = false;
+  //   });
+  //   List<String> seats = [];
+  //   for (final res in resList) {
+  //     totalSeatBooked = res.totalSeatBooked;
+  //     seats.add((res.seatNumbers));
+  //   }
+  //   bookedSeatNumbers = seats.join(',');
+  // }
+
   _getData() async {
+    print("Fetching seats for Schedule: ${schedule.scheduleId} on Date: $departureDate");
     final resList = await Provider.of<AppDataProvider>(context, listen: false)
         .getReservationsByScheduleAndDepartureDate(
-          schedule.scheduleId!,
-          departureDate,
-        );
-    setState(() {
-      isDataLoading = false;
-    });
+      schedule.scheduleId!,
+      departureDate,
+    );
+    print("Reservations found: ${resList.length}");
     List<String> seats = [];
     for (final res in resList) {
-      totalSeatBooked = res.totalSeatBooked;
-      seats.add((res.seatNumbers));
+      seats.add(
+        res.seatNumbers
+            .split(',')
+            .map((e) => e.trim())
+            .join(','),
+      );
+
     }
-    bookedSeatNumbers = seats.join(',');
+
+    setState(() {
+      bookedSeatNumbers = seats.join(',');
+      isDataLoading = false;
+    });
   }
 
   @override

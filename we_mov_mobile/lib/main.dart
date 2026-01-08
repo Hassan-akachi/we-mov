@@ -5,6 +5,7 @@ import 'package:we_mov_mobile/pages/add_route_page.dart';
 import 'package:we_mov_mobile/pages/add_schedule_page.dart';
 import 'package:we_mov_mobile/pages/booking_confrimation_page.dart';
 import 'package:we_mov_mobile/pages/login_page.dart';
+import 'package:we_mov_mobile/pages/reservation_list_screen.dart';
 import 'package:we_mov_mobile/pages/reservation_page.dart';
 import 'package:we_mov_mobile/pages/search_page.dart';
 import 'package:we_mov_mobile/pages/search_result_page.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
         routeNameAddRoutePage : (context) => const AddRoutePage(),
         routeNameAddSchedulePage : (context) => const AddSchedulePage(),
         routeNameReservationPage : (context) => const ReservationPage(),
+        routeNameReservationListScreenPage: (context) => const ReservationListPage(),
         routeNameLoginPage : (context) => const LoginPage(),
         routeNameSignupPage : (context) => const SignUpPage(),
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:we_mov_mobile/utils/constants.dart';
 
+import '../utils/helper_functions.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -49,10 +51,21 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // Navigate to home screen after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
+
+
+      if (await hasTokenExpired()) {
       Navigator.pushReplacementNamed(
-        context,routeNameLoginPage
+      context,routeNameLoginPage
       );
+      } else {
+        Navigator.pushReplacementNamed(
+            context,routeNameSelectTransport
+        );
+      }
+
+
+
     });
   }
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'constants.dart';
 
 String getFormattedDate(DateTime dt,{String pattern ='dd/MM/yyy'}){
   return DateFormat(pattern).format(dt);
@@ -45,4 +48,51 @@ int getGrandTotal (int discount,int totalSeatBooked,int price,int fee){
   final priceAfterDiscount =
       subTotal - ((subTotal * discount)/ 100);
   return (priceAfterDiscount + fee).toInt();
+}
+
+Future<bool> saveToken(String token) async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.setString(accessToken, token);
+}
+
+Future<String> getToken() async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.getString(accessToken) ?? '';
+}
+
+Future<bool> saveLoginTime(int time) async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.setInt(loginTime, time);
+}
+
+Future<int> getLoginTime() async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.getInt(loginTime) ?? 0;
+}
+
+Future<bool> saveExpirationDuration(int duration) async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.setInt(expirationDuration, duration);
+}
+
+Future<int> getExpirationDuration() async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.getInt(expirationDuration) ?? 0;
+}
+
+
+Future<bool> saveIsAdmin(String role) async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.setString(isAdmin, role);
+}
+
+Future<String> getIsAdmin() async {
+  final pref = await SharedPreferences.getInstance();
+  return pref.getString(isAdmin) ??'';
+}
+
+Future<bool> hasTokenExpired() async {
+  final loginTime = await getLoginTime();
+  final expDuration = await getExpirationDuration();
+  return DateTime.now().millisecondsSinceEpoch - loginTime > expDuration;
 }

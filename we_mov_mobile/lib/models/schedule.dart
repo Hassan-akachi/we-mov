@@ -49,4 +49,27 @@ class Schedule {
       ticketPrice: ticketPrice ?? this.ticketPrice,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "scheduleId": this.scheduleId,
+      "vehicle": this.vehicle,
+      "route": this.route,
+      "departureTime": this.departureTime,
+      "ticketPrice": this.ticketPrice,
+      "discount": this.discount,
+      "processingFee": this.processingFee,
+    };
+  }
+
+  factory Schedule.fromJson(Map<String, dynamic> json) {
+    return Schedule(scheduleId: int.parse(json["scheduleId"]),
+      vehicle: Vehicle.fromJson(json["vehicle"]),
+      route: BusRoute.fromJson(json["route"]),
+      departureTime: json["departureTime"],
+      ticketPrice: int.parse(json["ticketPrice"]),
+      discount: int.parse(json["discount"]),
+      processingFee: int.parse(json["processingFee"]),);
+  }
+
 }

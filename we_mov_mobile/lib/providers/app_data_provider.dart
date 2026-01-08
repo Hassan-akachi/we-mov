@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:we_mov_mobile/datasource/app_data_source.dart';
 import 'package:we_mov_mobile/datasource/vehicle_data_source.dart';
-import 'package:we_mov_mobile/datasource/vehicle_dummy_datasource.dart';
 import 'package:we_mov_mobile/models/schedule.dart';
 import 'package:we_mov_mobile/models/vehicle.dart';
 
 import '../datasource/data_source.dart';
 import '../datasource/dummy_data_source.dart';
+import '../models/app_user.dart';
+import '../models/auth_response_model.dart';
 import '../models/bus_model.dart';
 import '../models/bus_reservation.dart';
 import '../models/bus_route.dart';
@@ -13,6 +15,7 @@ import '../models/bus_schedule.dart';
 import '../models/reservation_expansion_item.dart';
 import '../models/response_model.dart';
 import '../utils/constants.dart';
+import '../utils/helper_functions.dart';
 
 
 class AppDataProvider extends ChangeNotifier {
@@ -30,9 +33,22 @@ class AppDataProvider extends ChangeNotifier {
   List<BusRoute> get routeList => _routeList;
 
   List<BusReservation> get reservationList => _reservationList;
-  final DataSource _dataSource = DummyDataSource();
+  final DataSource _dataSource = AppDataSource(); //DummyDataSource();
 
-  final VehicleDataSource _vehicleDataSource = VehicleDummyDatasource();
+
+
+
+
+  Future<AuthResponseModel?> login(AppUser user) async {
+    final response = await _dataSource.login(user);
+    if(response == null) return null;
+    await saveToken(response.accessToken);
+    await saveLoginTime(response.loginTime);
+    await saveExpirationDuration(response.expirationDuration);
+    await saveIsAdmin(user.role);
+    return response;
+  }
+
 
 
   // New property to track selected transport
@@ -89,17 +105,10 @@ class AppDataProvider extends ChangeNotifier {
     return _dataSource.getRouteByCityFromAndCityTo(cityFrom, cityTo,selectedTransport);
   }
 
-  Future<BusRoute?> getVehicleRouteByCityFromAndCityToAndType(String cityFrom, String cityTo,TransportType transportType) {
-    return _vehicleDataSource.getVehicleRouteByCityFromAndCityToAndType(cityFrom, cityTo,transportType);
-  }
-
   Future<List<BusSchedule>> getSchedulesByRouteName(String routeName, TransportType transportType) async {
     return _dataSource.getSchedulesByRouteName(routeName,transportType);
   }
 
-  Future<List<Schedule>> getVehicleSchedulesByRouteName(BusRoute routeName) async {
-    return _vehicleDataSource.getSchedulesByVehicleRouteName(routeName);
-  }
 
   Future<List<BusReservation>> getReservationsByScheduleAndDepartureDate(
       int scheduleId, String departureDate) {
