@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/app_data_provider.dart';
 import '../utils/constants.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<AppDataProvider>();
     return Drawer(
       child: ListView(
         children: [
@@ -33,7 +37,7 @@ class MainDrawer extends StatelessWidget {
               Navigator.pushNamed(context, routeNameAddBusPage);
             },
             leading: const Icon(Icons.bus_alert),
-            title: const Text('Add Bus'),
+            title: const Text('Add Vehicle'),
           ),
           ListTile(
             onTap: () {
@@ -68,9 +72,10 @@ class MainDrawer extends StatelessWidget {
             title: const Text('View Reservations (List Screen)'),
           ),
           ListTile(
-            onTap: () {
+            onTap: () async {
               Navigator.pop(context);
               Navigator.pushNamed(context, routeNameLoginPage);
+              await provider.logout();
             },
             leading: const Icon(Icons.login_outlined),
             title: const Text('Admin Login'),

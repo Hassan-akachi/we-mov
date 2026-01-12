@@ -56,7 +56,7 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                   },
                   isExpanded: true,
                   value: bus,
-                  hint: const Text('Select Bus'),
+                  hint: const Text('Select Vehicle'),
                   items: provider.busList
                       .map((e) => DropdownMenuItem<Bus>(
                     value: e,

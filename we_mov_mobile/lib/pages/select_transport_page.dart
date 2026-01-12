@@ -13,10 +13,9 @@ import '../widget/transport_card.dart';
 class SelectTransportPage extends StatelessWidget {
   const SelectTransportPage({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-    TransportType? selectedTransport;
+
 
     // Create a map to associate transport types with screens
     final List<TransportData> transports = [
@@ -62,84 +61,109 @@ class SelectTransportPage extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(appBar: AppBar(),
-      drawer: MainDrawer(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                children: [
-                  const Text(
-                    'Choose Your Transport',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+    // 1. Get the provider instance
+    final provider = context.read<AppDataProvider>();
+    final selectedTransport =
+        context.watch<AppDataProvider>().selectedTransport;
+    return FutureBuilder<bool>(
+      future: provider.shouldShowDrawer(),
+      builder: (context, snapshot) {
+        final showDrawer = snapshot.data == true;
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$showDrawer");
 
-                    ),
-                    textAlign: TextAlign.center,
+        return Scaffold(
+          appBar: AppBar(
+            actions: [
+              if (showDrawer)
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () async {
+                    await provider.logout();
+                    Navigator.pushReplacementNamed(context, routeNameLoginPage);
+                  },
+                ),
+            ],
+          ),
+          drawer: !showDrawer ? const MainDrawer() : null,
+
+          body: SafeArea(
+            child: Column(
+              children: [
+                // Header
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Choose Your Transport',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Select your preferred mode of transportation',
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Select your preferred mode of transportation',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
+                ),
+
+                // Transport Cards
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: transports.length,
+                    itemBuilder: (context, index) {
+                      final transport = transports[index];
+                      final isSelected = selectedTransport == transport.type;
+
+                      // Read the selected transport from the provider if needed for selection effect.
+                      // final currentSelection = context
+                      //     .watch<AppDataProvider>()
+                      //     .selectedTransport;
+                      //
+                      //
+                      // final isSelected = currentSelection == transport.type;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: TransportCard(
+                          transport: transport,
+                          isSelected: isSelected,
+                          onTap: () {
+                            // 2. Set the selected transport type in the provider
+                            provider.setTransport(transport.type);
+
+                            // You can print the value from the provider now
+                            print(
+                              "Selected Transport Type: ${provider.selectedTransport}",
+                            );
+
+                            // 3. Navigate to the next page
+                            Navigator.pushNamed(
+                              context,
+                              // You were trying to push to routeNameHome, which is likely the SearchPage route
+                              // If you want to pass the selected type as an argument:
+                              routeNameHome, // Assuming this is your next page
+                              // The selected transport is now available in the provider,
+                              // but you can pass the type as an argument if required by the next screen's arguments
+                              arguments: [transport.type],
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            // Transport Cards
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: transports.length,
-                itemBuilder: (context, index) {
-                  final transport = transports[index];
-
-                  // Read the selected transport from the provider if needed for selection effect.
-                  final currentSelection = context.watch<AppDataProvider>().selectedTransport;
-                  final isSelected = currentSelection == transport.type;
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: TransportCard(
-                      transport: transport,
-                      isSelected: isSelected,
-                      onTap: () {
-                        // 1. Get the provider instance
-                        final provider = context.read<AppDataProvider>();
-
-                        // 2. Set the selected transport type in the provider
-                        provider.setTransport(transport.type);
-
-                        // You can print the value from the provider now
-                        print("Selected Transport Type: ${provider.selectedTransport}");
-
-                        // 3. Navigate to the next page
-                        Navigator.pushNamed(
-                          context,
-                          // You were trying to push to routeNameHome, which is likely the SearchPage route
-                          // If you want to pass the selected type as an argument:
-                          routeNameHome, // Assuming this is your next page
-                          // The selected transport is now available in the provider,
-                          // but you can pass the type as an argument if required by the next screen's arguments
-                          arguments: [transport.type],
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

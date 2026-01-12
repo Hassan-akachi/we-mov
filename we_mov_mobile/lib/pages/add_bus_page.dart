@@ -37,7 +37,7 @@ class _AddBusPageState extends State<AddBusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Bus')),
+      appBar: AppBar(title: const Text('Add vehicle')),
       body: Form(
         key: _formKey,
         child: Center(
@@ -56,7 +56,7 @@ class _AddBusPageState extends State<AddBusPage> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please select a Bus Type';
+                    return 'Please select a vehicle Type';
                   }
                 },
                 decoration: InputDecoration(
@@ -64,7 +64,7 @@ class _AddBusPageState extends State<AddBusPage> {
                 ),
                 isExpanded: true,
                 value: busType,
-                hint: const Text('Select Bus Type'),
+                hint: const Text('Select vehicle Type'),
                 items: busTypes
                     .map(
                       (e) => DropdownMenuItem<String>(value: e, child: Text(e)),
@@ -75,7 +75,7 @@ class _AddBusPageState extends State<AddBusPage> {
               TextFormField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  hintText: 'Bus Name',
+                  hintText: 'vehicle Name',
                   filled: true,
                   prefixIcon: Icon(Icons.bus_alert),
                 ),
@@ -90,7 +90,7 @@ class _AddBusPageState extends State<AddBusPage> {
               TextFormField(
                 controller: numberController,
                 decoration: const InputDecoration(
-                  hintText: 'Bus Number',
+                  hintText: 'vehicle Number',
                   filled: true,
                   prefixIcon: Icon(Icons.bus_alert),
                 ),
@@ -125,7 +125,7 @@ class _AddBusPageState extends State<AddBusPage> {
                   width: 150,
                   child: ElevatedButton(
                     onPressed: addBus,
-                    child: const Text('ADD BUS'),
+                    child: const Text('ADD vehicle'),
                   ),
                 ),
               ),

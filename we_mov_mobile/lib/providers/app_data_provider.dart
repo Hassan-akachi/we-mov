@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_mov_mobile/datasource/app_data_source.dart';
 import 'package:we_mov_mobile/datasource/vehicle_data_source.dart';
 import 'package:we_mov_mobile/models/schedule.dart';
@@ -35,9 +36,17 @@ class AppDataProvider extends ChangeNotifier {
   List<BusReservation> get reservationList => _reservationList;
   final DataSource _dataSource = AppDataSource(); //DummyDataSource();
 
+  bool _isAdminUser = false;
+  bool get isAdminUser => _isAdminUser;
 
 
 
+  // Call this after a successful login or during app startup
+  Future<void> checkAdminStatus() async {
+    String role = await getIsAdmin();
+    _isAdminUser = role == 'Admin';
+    notifyListeners();
+  }
 
   Future<AuthResponseModel?> login(AppUser user) async {
     final response = await _dataSource.login(user);
@@ -46,10 +55,20 @@ class AppDataProvider extends ChangeNotifier {
     await saveLoginTime(response.loginTime);
     await saveExpirationDuration(response.expirationDuration);
     await saveIsAdmin(user.role);
+    checkAdminStatus();
     return response;
   }
 
+  Future<void> logout() async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.clear(); // Clears token, isAdmin, loginTime, etc.
+  }
 
+  Future<bool> shouldShowDrawer() async {
+    bool expired = await hasTokenExpired();
+    String role = await getIsAdmin();
+    return !expired && role == 'Admin';
+  }
 
   // New property to track selected transport
   TransportType? _selectedTransport;
